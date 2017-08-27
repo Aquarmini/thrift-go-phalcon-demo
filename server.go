@@ -29,7 +29,6 @@ func main() {
 	processor.RegisterProcessor("app", service.NewAppProcessor(&impl.App{}));
 	processor.RegisterProcessor("user", service.NewUserProcessor(&impl.User{}));
 	server := thrift.NewTSimpleServer4(processor, serverTransport, transportFactory, protocolFactory)
-	//server = thrift.NewTSimpleServer4(processor1, serverTransport, transportFactory, protocolFactory)
 
 	fmt.Println("thrift server in", NetworkAddr)
 	server.Serve()
