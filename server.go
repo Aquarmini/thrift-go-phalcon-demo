@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"os"
+	//"os"
 	"phalcon/demo/micro/impl"
 	"phalcon/demo/micro/service"
 	"thrift"
+	"os"
 )
 
 const (
@@ -24,10 +25,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	handler := &impl.App{}
-	processor := service.NewAppProcessor(handler)
-
+	processor := thrift.NewTMultiplexedProcessor();
+	processor.RegisterProcessor("app", service.NewAppProcessor(&impl.App{}));
+	processor.RegisterProcessor("user", service.NewUserProcessor(&impl.User{}));
 	server := thrift.NewTSimpleServer4(processor, serverTransport, transportFactory, protocolFactory)
+	//server = thrift.NewTSimpleServer4(processor1, serverTransport, transportFactory, protocolFactory)
+
 	fmt.Println("thrift server in", NetworkAddr)
 	server.Serve()
+
 }
