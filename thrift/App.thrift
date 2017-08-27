@@ -1,5 +1,5 @@
 namespace php MicroService
-namespace go micro.service
+namespace go phalcon.demo.micro.service
 
 service App {
     string version()

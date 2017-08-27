@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"micro/service"
 	"os"
+	"phalcon/demo/micro/service"
 	"thrift"
 )
 
