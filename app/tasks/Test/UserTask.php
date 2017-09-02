@@ -2,6 +2,7 @@
 
 namespace App\Tasks\Test;
 
+use App\Logics\Thrift\Clients\UserClient;
 use App\Tasks\Task;
 use Thrift\Protocol\TBinaryProtocol;
 use Thrift\Protocol\TMultiplexedProtocol;
@@ -15,13 +16,11 @@ class UserTask extends Task
 
     }
 
-    public function getAction()
+    public function get1Action()
     {
         $thrift = di('thrift');
 
-        $thrift->setHost('127.0.0.1');
-        $thrift->setPort('10086');
-        $socket = $thrift->socket();
+        $socket = $thrift->socket('127.0.0.1', '10086');
 
         // $transport = new TFramedTransport($socket, 1024, 1024);
         $transport = new TBufferedTransport($socket, 1024, 1024);
@@ -39,6 +38,12 @@ class UserTask extends Task
         echo PHP_EOL;
 
         $transport->close();
+    }
+
+    public function getAction()
+    {
+        $result = UserClient::getByUserId(100);
+        dd($result);
     }
 
 }
