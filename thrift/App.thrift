@@ -12,4 +12,5 @@ service App {
 
 service User{
     UserDTO getByUserId(1:i64 user_id)
+    bool save(1:i64 user_id, 2:string name)
 }

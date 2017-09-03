@@ -22,6 +22,7 @@ func Usage() {
   flag.PrintDefaults()
   fmt.Fprintln(os.Stderr, "\nFunctions:")
   fmt.Fprintln(os.Stderr, "  UserDTO getByUserId(i64 user_id)")
+  fmt.Fprintln(os.Stderr, "  bool save(i64 user_id, string name)")
   fmt.Fprintln(os.Stderr)
   os.Exit(0)
 }
@@ -121,13 +122,29 @@ func main() {
       fmt.Fprintln(os.Stderr, "GetByUserId requires 1 args")
       flag.Usage()
     }
-    argvalue0, err8 := (strconv.ParseInt(flag.Arg(1), 10, 64))
-    if err8 != nil {
+    argvalue0, err10 := (strconv.ParseInt(flag.Arg(1), 10, 64))
+    if err10 != nil {
       Usage()
       return
     }
     value0 := argvalue0
     fmt.Print(client.GetByUserId(value0))
+    fmt.Print("\n")
+    break
+  case "save":
+    if flag.NArg() - 1 != 2 {
+      fmt.Fprintln(os.Stderr, "Save requires 2 args")
+      flag.Usage()
+    }
+    argvalue0, err11 := (strconv.ParseInt(flag.Arg(1), 10, 64))
+    if err11 != nil {
+      Usage()
+      return
+    }
+    value0 := argvalue0
+    argvalue1 := flag.Arg(2)
+    value1 := argvalue1
+    fmt.Print(client.Save(value0, value1))
     fmt.Print("\n")
     break
   case "":

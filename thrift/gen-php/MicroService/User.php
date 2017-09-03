@@ -22,6 +22,12 @@ interface UserIf {
    * @return \MicroService\UserDTO
    */
   public function getByUserId($user_id);
+  /**
+   * @param int $user_id
+   * @param string $name
+   * @return bool
+   */
+  public function save($user_id, $name);
 }
 
 
@@ -85,6 +91,58 @@ class UserClient implements \MicroService\UserIf {
       return $result->success;
     }
     throw new \Exception("getByUserId failed: unknown result");
+  }
+
+  public function save($user_id, $name)
+  {
+    $this->send_save($user_id, $name);
+    return $this->recv_save();
+  }
+
+  public function send_save($user_id, $name)
+  {
+    $args = new \MicroService\User_save_args();
+    $args->user_id = $user_id;
+    $args->name = $name;
+    $bin_accel = ($this->output_ instanceof TBinaryProtocolAccelerated) && function_exists('thrift_protocol_write_binary');
+    if ($bin_accel)
+    {
+      thrift_protocol_write_binary($this->output_, 'save', TMessageType::CALL, $args, $this->seqid_, $this->output_->isStrictWrite());
+    }
+    else
+    {
+      $this->output_->writeMessageBegin('save', TMessageType::CALL, $this->seqid_);
+      $args->write($this->output_);
+      $this->output_->writeMessageEnd();
+      $this->output_->getTransport()->flush();
+    }
+  }
+
+  public function recv_save()
+  {
+    $bin_accel = ($this->input_ instanceof TBinaryProtocolAccelerated) && function_exists('thrift_protocol_read_binary');
+    if ($bin_accel) $result = thrift_protocol_read_binary($this->input_, '\MicroService\User_save_result', $this->input_->isStrictRead());
+    else
+    {
+      $rseqid = 0;
+      $fname = null;
+      $mtype = 0;
+
+      $this->input_->readMessageBegin($fname, $mtype, $rseqid);
+      if ($mtype == TMessageType::EXCEPTION) {
+        $x = new TApplicationException();
+        $x->read($this->input_);
+        $this->input_->readMessageEnd();
+        throw $x;
+      }
+      $result = new \MicroService\User_save_result();
+      $result->read($this->input_);
+      $this->input_->readMessageEnd();
+    }
+    if ($result->success !== null) {
+      return $result->success;
+    }
+    throw new \Exception("save failed: unknown result");
   }
 
 }
@@ -247,51 +305,177 @@ class User_getByUserId_result {
 
 }
 
-class UserProcessor {
-  protected $handler_ = null;
-  public function __construct($handler) {
-    $this->handler_ = $handler;
+class User_save_args {
+  static $_TSPEC;
+
+  /**
+   * @var int
+   */
+  public $user_id = null;
+  /**
+   * @var string
+   */
+  public $name = null;
+
+  public function __construct($vals=null) {
+    if (!isset(self::$_TSPEC)) {
+      self::$_TSPEC = array(
+        1 => array(
+          'var' => 'user_id',
+          'type' => TType::I64,
+          ),
+        2 => array(
+          'var' => 'name',
+          'type' => TType::STRING,
+          ),
+        );
+    }
+    if (is_array($vals)) {
+      if (isset($vals['user_id'])) {
+        $this->user_id = $vals['user_id'];
+      }
+      if (isset($vals['name'])) {
+        $this->name = $vals['name'];
+      }
+    }
   }
 
-  public function process($input, $output) {
-    $rseqid = 0;
+  public function getName() {
+    return 'User_save_args';
+  }
+
+  public function read($input)
+  {
+    $xfer = 0;
     $fname = null;
-    $mtype = 0;
-
-    $input->readMessageBegin($fname, $mtype, $rseqid);
-    $methodname = 'process_'.$fname;
-    if (!method_exists($this, $methodname)) {
-      $input->skip(TType::STRUCT);
-      $input->readMessageEnd();
-      $x = new TApplicationException('Function '.$fname.' not implemented.', TApplicationException::UNKNOWN_METHOD);
-      $output->writeMessageBegin($fname, TMessageType::EXCEPTION, $rseqid);
-      $x->write($output);
-      $output->writeMessageEnd();
-      $output->getTransport()->flush();
-      return;
+    $ftype = 0;
+    $fid = 0;
+    $xfer += $input->readStructBegin($fname);
+    while (true)
+    {
+      $xfer += $input->readFieldBegin($fname, $ftype, $fid);
+      if ($ftype == TType::STOP) {
+        break;
+      }
+      switch ($fid)
+      {
+        case 1:
+          if ($ftype == TType::I64) {
+            $xfer += $input->readI64($this->user_id);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 2:
+          if ($ftype == TType::STRING) {
+            $xfer += $input->readString($this->name);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        default:
+          $xfer += $input->skip($ftype);
+          break;
+      }
+      $xfer += $input->readFieldEnd();
     }
-    $this->$methodname($rseqid, $input, $output);
-    return true;
+    $xfer += $input->readStructEnd();
+    return $xfer;
   }
 
-  protected function process_getByUserId($seqid, $input, $output) {
-    $args = new \MicroService\User_getByUserId_args();
-    $args->read($input);
-    $input->readMessageEnd();
-    $result = new \MicroService\User_getByUserId_result();
-    $result->success = $this->handler_->getByUserId($args->user_id);
-    $bin_accel = ($output instanceof TBinaryProtocolAccelerated) && function_exists('thrift_protocol_write_binary');
-    if ($bin_accel)
-    {
-      thrift_protocol_write_binary($output, 'getByUserId', TMessageType::REPLY, $result, $seqid, $output->isStrictWrite());
+  public function write($output) {
+    $xfer = 0;
+    $xfer += $output->writeStructBegin('User_save_args');
+    if ($this->user_id !== null) {
+      $xfer += $output->writeFieldBegin('user_id', TType::I64, 1);
+      $xfer += $output->writeI64($this->user_id);
+      $xfer += $output->writeFieldEnd();
     }
-    else
-    {
-      $output->writeMessageBegin('getByUserId', TMessageType::REPLY, $seqid);
-      $result->write($output);
-      $output->writeMessageEnd();
-      $output->getTransport()->flush();
+    if ($this->name !== null) {
+      $xfer += $output->writeFieldBegin('name', TType::STRING, 2);
+      $xfer += $output->writeString($this->name);
+      $xfer += $output->writeFieldEnd();
     }
+    $xfer += $output->writeFieldStop();
+    $xfer += $output->writeStructEnd();
+    return $xfer;
   }
+
 }
+
+class User_save_result {
+  static $_TSPEC;
+
+  /**
+   * @var bool
+   */
+  public $success = null;
+
+  public function __construct($vals=null) {
+    if (!isset(self::$_TSPEC)) {
+      self::$_TSPEC = array(
+        0 => array(
+          'var' => 'success',
+          'type' => TType::BOOL,
+          ),
+        );
+    }
+    if (is_array($vals)) {
+      if (isset($vals['success'])) {
+        $this->success = $vals['success'];
+      }
+    }
+  }
+
+  public function getName() {
+    return 'User_save_result';
+  }
+
+  public function read($input)
+  {
+    $xfer = 0;
+    $fname = null;
+    $ftype = 0;
+    $fid = 0;
+    $xfer += $input->readStructBegin($fname);
+    while (true)
+    {
+      $xfer += $input->readFieldBegin($fname, $ftype, $fid);
+      if ($ftype == TType::STOP) {
+        break;
+      }
+      switch ($fid)
+      {
+        case 0:
+          if ($ftype == TType::BOOL) {
+            $xfer += $input->readBool($this->success);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        default:
+          $xfer += $input->skip($ftype);
+          break;
+      }
+      $xfer += $input->readFieldEnd();
+    }
+    $xfer += $input->readStructEnd();
+    return $xfer;
+  }
+
+  public function write($output) {
+    $xfer = 0;
+    $xfer += $output->writeStructBegin('User_save_result');
+    if ($this->success !== null) {
+      $xfer += $output->writeFieldBegin('success', TType::BOOL, 0);
+      $xfer += $output->writeBool($this->success);
+      $xfer += $output->writeFieldEnd();
+    }
+    $xfer += $output->writeFieldStop();
+    $xfer += $output->writeStructEnd();
+    return $xfer;
+  }
+
+}
+
 

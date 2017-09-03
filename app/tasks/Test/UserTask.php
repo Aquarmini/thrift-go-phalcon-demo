@@ -16,7 +16,7 @@ class UserTask extends Task
 
     }
 
-    public function get1Action()
+    public function getAction()
     {
         $thrift = di('thrift');
 
@@ -40,9 +40,15 @@ class UserTask extends Task
         $transport->close();
     }
 
-    public function getAction()
+    public function getByUserIdAction()
     {
         $result = UserClient::getByUserId(100);
+        dd($result);
+    }
+
+    public function saveAction()
+    {
+        $result = UserClient::save(1, 'limx');
         dd($result);
     }
 
