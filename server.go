@@ -14,6 +14,7 @@ const (
 )
 
 func init() {
+	//go get -u github.com/sirupsen/logrus
 	fmt.Println("INIT")
 }
 
