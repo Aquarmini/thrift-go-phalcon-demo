@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
-	//"os"
 	"phalcon/demo/micro/impl"
 	"phalcon/demo/micro/service"
 	"thrift"
 	"os"
 )
+import log "github.com/sirupsen/logrus"
 
 const (
 	NetworkAddr = "0.0.0.0:10086"
@@ -16,6 +16,8 @@ const (
 func init() {
 	//go get -u github.com/sirupsen/logrus
 	fmt.Println("INIT")
+	file, _ := os.OpenFile("go.server.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	log.SetOutput(file);
 }
 
 func main() {

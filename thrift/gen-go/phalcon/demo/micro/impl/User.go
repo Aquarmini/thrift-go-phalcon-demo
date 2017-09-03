@@ -2,7 +2,7 @@ package impl
 
 import "fmt"
 import "phalcon/demo/micro/service"
-import log "github.com/Sirupsen/logrus"
+import log "github.com/sirupsen/logrus"
 //import "runtime"
 
 type User struct {
