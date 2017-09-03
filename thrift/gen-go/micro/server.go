@@ -2,22 +2,24 @@ package main
 
 import (
 	"fmt"
-	"phalcon/demo/micro/impl"
-	"phalcon/demo/micro/service"
-	"thrift"
+	"micro/service"
+	"micro/impl"
+	"micro/config"
 	"os"
-)
-import log "github.com/sirupsen/logrus"
-
-const (
-	NetworkAddr = "0.0.0.0:10086"
+	"thrift"
 )
 
 func init() {
-	//go get -u github.com/sirupsen/logrus
-	fmt.Println("INIT")
-	file, _ := os.OpenFile("go.server.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
-	log.SetOutput(file);
+	// 判断日志目录是否存在
+	stat, err := os.Stat(config.LOGDIR)
+	if err != nil {
+		// 新建目录
+		os.Mkdir(config.LOGDIR, 0755)
+	} else {
+		if stat.Mode() != 0755 {
+			os.Chmod(config.LOGDIR, 0755)
+		}
+	}
 }
 
 func main() {
@@ -26,7 +28,7 @@ func main() {
 	protocolFactory := thrift.NewTBinaryProtocolFactoryDefault()
 	//protocolFactory := thrift.NewTCompactProtocolFactory()
 
-	serverTransport, err := thrift.NewTServerSocket(NetworkAddr)
+	serverTransport, err := thrift.NewTServerSocket(config.NETWORK_ADDR)
 	if err != nil {
 		fmt.Println("Error!", err)
 		os.Exit(1)
@@ -34,10 +36,9 @@ func main() {
 
 	processor := thrift.NewTMultiplexedProcessor();
 	processor.RegisterProcessor("app", service.NewAppProcessor(&impl.App{}));
-	processor.RegisterProcessor("user", service.NewUserProcessor(&impl.User{}));
+	//processor.RegisterProcessor("user", service.NewUserProcessor(&impl.User{}));
 	server := thrift.NewTSimpleServer4(processor, serverTransport, transportFactory, protocolFactory)
 
-	fmt.Println("thrift server in", NetworkAddr)
+	fmt.Println("thrift server in", config.NETWORK_ADDR)
 	server.Serve()
-
 }
