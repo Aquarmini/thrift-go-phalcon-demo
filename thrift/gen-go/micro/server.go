@@ -2,24 +2,17 @@ package main
 
 import (
 	"fmt"
+	"app/config"
+	"app/impl"
 	"micro/service"
-	"micro/impl"
-	"micro/config"
+	"app/provider"
 	"os"
 	"thrift"
 )
 
 func init() {
-	// 判断日志目录是否存在
-	stat, err := os.Stat(config.LOGDIR)
-	if err != nil {
-		// 新建目录
-		os.Mkdir(config.LOGDIR, 0755)
-	} else {
-		if stat.Mode() != 0755 {
-			os.Chmod(config.LOGDIR, 0755)
-		}
-	}
+	logger := provider.Logger{}
+	logger.Register()
 }
 
 func main() {
@@ -34,8 +27,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	processor := thrift.NewTMultiplexedProcessor();
-	processor.RegisterProcessor("app", service.NewAppProcessor(&impl.App{}));
+	processor := thrift.NewTMultiplexedProcessor()
+	processor.RegisterProcessor("app", service.NewAppProcessor(&impl.App{}))
 	//processor.RegisterProcessor("user", service.NewUserProcessor(&impl.User{}));
 	server := thrift.NewTSimpleServer4(processor, serverTransport, transportFactory, protocolFactory)
 
