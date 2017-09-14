@@ -1,5 +1,5 @@
 namespace php MicroService
-namespace go phalcon.demo.micro.service
+namespace go micro.service
 
 struct UserDTO {
     1:i64 user_id,
