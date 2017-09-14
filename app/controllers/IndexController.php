@@ -9,6 +9,7 @@
 namespace App\Controllers;
 
 use App\Logics\System;
+use App\Logics\Thrift\Clients\AppClient;
 
 class IndexController extends Controller
 {
@@ -23,11 +24,10 @@ class IndexController extends Controller
         return $this->view->render('index', 'index');
     }
 
-    // public function serverAction()
-    // {
-    //     $this->thrift->handle(
-    //         \App\Logics\Thrift\App::class,
-    //         \MicroService\SystemProcessor::class
-    //     );
-    // }
+    public function versionAction()
+    {
+        $client = AppClient::getInstance();
+
+        dump($client->version());
+    }
 }
