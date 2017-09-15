@@ -13,7 +13,7 @@ import (
         "strconv"
         "strings"
         "thrift"
-        "phalcon/demo/micro/service"
+        "vendor/service"
 )
 
 

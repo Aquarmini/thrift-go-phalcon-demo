@@ -12,5 +12,6 @@ func main() {
 	di := container.GetInstance();
 	server := di.Get("thrift").(*providers.Server);
 	server.RegisterProcessor("app", service.NewAppProcessor(&impl.App{}));
+	server.RegisterProcessor("user", service.NewUserProcessor(&impl.User{}));
 	server.Serve();
 }
