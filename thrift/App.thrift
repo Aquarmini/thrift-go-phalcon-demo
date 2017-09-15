@@ -1,5 +1,5 @@
 namespace php MicroService
-namespace go micro.service
+namespace go vendor.service
 
 struct UserDTO {
     1:i64 user_id,
