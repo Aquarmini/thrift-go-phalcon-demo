@@ -1,30 +1,20 @@
 <?php
 // +----------------------------------------------------------------------
-// | 控制器基类 [ WE CAN DO IT JUST THINK IT ]
+// | AppHandler.php [ WE CAN DO IT JUST THINK IT ]
 // +----------------------------------------------------------------------
 // | Copyright (c) 2016-2017 limingxinleo All rights reserved.
 // +----------------------------------------------------------------------
 // | Author: limx <715557344@qq.com> <https://github.com/limingxinleo>
 // +----------------------------------------------------------------------
-namespace App\Controllers;
+namespace App\Thrift\Services;
 
-use App\Controllers\Traits\Response;
+use MicroService\AppIf;
 
-abstract class Controller extends \Phalcon\Mvc\Controller
+class AppHandler extends Handler implements AppIf
 {
-    use Response;
-
-    public function initialize()
+    public function version()
     {
+        return $this->config->version;
     }
 
-    public function beforeExecuteRoute()
-    {
-        // 在每一个找到的动作前执行
-    }
-
-    public function afterExecuteRoute()
-    {
-        // 在每一个找到的动作后执行
-    }
 }
