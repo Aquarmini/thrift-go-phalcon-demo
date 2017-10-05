@@ -8,10 +8,10 @@
 // +----------------------------------------------------------------------
 declare(ticks=1);
 
-namespace App\Tasks\System;
+namespace App\Core\Cli\Task;
 
 use Phalcon\Cli\Task;
-use limx\phalcon\Cli\Color;
+use Xin\Cli\Color;
 use swoole_process;
 
 abstract class Queue extends Task
